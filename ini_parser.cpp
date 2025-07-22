@@ -3,161 +3,161 @@
 #include <locale>
 #include <codecvt>
 
-// Удаление пробелов в начале и конце строки
+// Г“Г¤Г Г«ГҐГ­ГЁГҐ ГЇГ°Г®ГЎГҐГ«Г®Гў Гў Г­Г Г·Г Г«ГҐ ГЁ ГЄГ®Г­Г¶ГҐ Г±ГІГ°Г®ГЄГЁ
 std::string ini_parser::trim(const std::string& str)
 {
-    // Находим первый непробельный символ
+    // ГЌГ ГµГ®Г¤ГЁГ¬ ГЇГҐГ°ГўГ»Г© Г­ГҐГЇГ°Г®ГЎГҐГ«ГјГ­Г»Г© Г±ГЁГ¬ГўГ®Г«
     size_t first = str.find_first_not_of(" \t");
 
-    // Если строка состоит только из пробелов
+    // Г…Г±Г«ГЁ Г±ГІГ°Г®ГЄГ  Г±Г®Г±ГІГ®ГЁГІ ГІГ®Г«ГјГЄГ® ГЁГ§ ГЇГ°Г®ГЎГҐГ«Г®Гў
     if (first == std::string::npos)
     {
         return "";
     }
 
-    // Находим последний непробельный символ
+    // ГЌГ ГµГ®Г¤ГЁГ¬ ГЇГ®Г±Г«ГҐГ¤Г­ГЁГ© Г­ГҐГЇГ°Г®ГЎГҐГ«ГјГ­Г»Г© Г±ГЁГ¬ГўГ®Г«
     size_t last = str.find_last_not_of(" \t");
     return str.substr(first, (last - first + 1));
 }
 
-// Разделение строки на ключ и значение
+// ГђГ Г§Г¤ГҐГ«ГҐГ­ГЁГҐ Г±ГІГ°Г®ГЄГЁ Г­Г  ГЄГ«ГѕГ· ГЁ Г§Г­Г Г·ГҐГ­ГЁГҐ
 std::pair<std::string, std::string> ini_parser::split_key_value(const std::string& line, int line_num)
 {
-    // Ищем позицию знака равенства
+    // Г€Г№ГҐГ¬ ГЇГ®Г§ГЁГ¶ГЁГѕ Г§Г­Г ГЄГ  Г°Г ГўГҐГ­Г±ГІГўГ 
     size_t eq_pos = line.find('=');
 
-    // Если знак равенства не найден
+    // Г…Г±Г«ГЁ Г§Г­Г ГЄ Г°Г ГўГҐГ­Г±ГІГўГ  Г­ГҐ Г­Г Г©Г¤ГҐГ­
     if (eq_pos == std::string::npos)
     {
-        throw ini_parser_error("Некорректный формат строки (отсутствует '=')", line_num);
+        throw ini_parser_error("ГЌГҐГЄГ®Г°Г°ГҐГЄГІГ­Г»Г© ГґГ®Г°Г¬Г ГІ Г±ГІГ°Г®ГЄГЁ (Г®ГІГ±ГіГІГ±ГІГўГіГҐГІ '=')", line_num);
     }
 
-    // Извлекаем и тримим ключ
+    // Г€Г§ГўГ«ГҐГЄГ ГҐГ¬ ГЁ ГІГ°ГЁГ¬ГЁГ¬ ГЄГ«ГѕГ·
     std::string key = trim(line.substr(0, eq_pos));
 
-    // Проверяем что ключ не пустой
+    // ГЏГ°Г®ГўГҐГ°ГїГҐГ¬ Г·ГІГ® ГЄГ«ГѕГ· Г­ГҐ ГЇГіГ±ГІГ®Г©
     if (key.empty())
     {
-        throw ini_parser_error("Пустой ключ", line_num);
+        throw ini_parser_error("ГЏГіГ±ГІГ®Г© ГЄГ«ГѕГ·", line_num);
     }
 
-    // Извлекаем и тримим значение
+    // Г€Г§ГўГ«ГҐГЄГ ГҐГ¬ ГЁ ГІГ°ГЁГ¬ГЁГ¬ Г§Г­Г Г·ГҐГ­ГЁГҐ
     std::string value = trim(line.substr(eq_pos + 1));
     return std::make_pair(key, value);
 }
 
-// Проверка корректности имени секции
+// ГЏГ°Г®ГўГҐГ°ГЄГ  ГЄГ®Г°Г°ГҐГЄГІГ­Г®Г±ГІГЁ ГЁГ¬ГҐГ­ГЁ Г±ГҐГЄГ¶ГЁГЁ
 void ini_parser::validate_section_name(const std::string& name, int line_num)
 {
-    // Имя секции не может быть пустым
+    // Г€Г¬Гї Г±ГҐГЄГ¶ГЁГЁ Г­ГҐ Г¬Г®Г¦ГҐГІ ГЎГ»ГІГј ГЇГіГ±ГІГ»Г¬
     if (name.empty())
     {
-        throw ini_parser_error("Пустое имя секции", line_num);
+        throw ini_parser_error("ГЏГіГ±ГІГ®ГҐ ГЁГ¬Гї Г±ГҐГЄГ¶ГЁГЁ", line_num);
     }
 
-    // Имя секции не должно содержать пробелов
+    // Г€Г¬Гї Г±ГҐГЄГ¶ГЁГЁ Г­ГҐ Г¤Г®Г«Г¦Г­Г® Г±Г®Г¤ГҐГ°Г¦Г ГІГј ГЇГ°Г®ГЎГҐГ«Г®Гў
     for (char c : name)
     {
         if (std::isspace(c))
         {
-            throw ini_parser_error("Имя секции содержит пробелы", line_num);
+            throw ini_parser_error("Г€Г¬Гї Г±ГҐГЄГ¶ГЁГЁ Г±Г®Г¤ГҐГ°Г¦ГЁГІ ГЇГ°Г®ГЎГҐГ«Г»", line_num);
         }
     }
 }
 
-// Проверка корректности имени ключа
+// ГЏГ°Г®ГўГҐГ°ГЄГ  ГЄГ®Г°Г°ГҐГЄГІГ­Г®Г±ГІГЁ ГЁГ¬ГҐГ­ГЁ ГЄГ«ГѕГ·Г 
 void ini_parser::validate_key_name(const std::string& name, int line_num)
 {
-    // Ключ не может быть пустым
+    // ГЉГ«ГѕГ· Г­ГҐ Г¬Г®Г¦ГҐГІ ГЎГ»ГІГј ГЇГіГ±ГІГ»Г¬
     if (name.empty())
     {
-        throw ini_parser_error("Пустой ключ", line_num);
+        throw ini_parser_error("ГЏГіГ±ГІГ®Г© ГЄГ«ГѕГ·", line_num);
     }
 
-    // Ключ не должен содержать пробелов
+    // ГЉГ«ГѕГ· Г­ГҐ Г¤Г®Г«Г¦ГҐГ­ Г±Г®Г¤ГҐГ°Г¦Г ГІГј ГЇГ°Г®ГЎГҐГ«Г®Гў
     for (char c : name)
     {
         if (std::isspace(c))
         {
-            throw ini_parser_error("Ключ содержит пробелы", line_num);
+            throw ini_parser_error("ГЉГ«ГѕГ· Г±Г®Г¤ГҐГ°Г¦ГЁГІ ГЇГ°Г®ГЎГҐГ«Г»", line_num);
         }
     }
 }
 
-// Основной метод парсинга INI-файла
+// ГЋГ±Г­Г®ГўГ­Г®Г© Г¬ГҐГІГ®Г¤ ГЇГ Г°Г±ГЁГ­ГЈГ  INI-ГґГ Г©Г«Г 
 void ini_parser::parse_file(std::istream& stream)
 {
     std::string current_section;
     std::string line;
     int line_num = 0;
 
-    // Читаем файл построчно
+    // Г—ГЁГІГ ГҐГ¬ ГґГ Г©Г« ГЇГ®Г±ГІГ°Г®Г·Г­Г®
     while (std::getline(stream, line))
     {
         line_num++;
         line = trim(line);
 
-        // Пропускаем пустые строки и комментарии
+        // ГЏГ°Г®ГЇГіГ±ГЄГ ГҐГ¬ ГЇГіГ±ГІГ»ГҐ Г±ГІГ°Г®ГЄГЁ ГЁ ГЄГ®Г¬Г¬ГҐГ­ГІГ Г°ГЁГЁ
         if (line.empty() || line[0] == ';')
         {
             continue;
         }
 
-        // Обработка секции
+        // ГЋГЎГ°Г ГЎГ®ГІГЄГ  Г±ГҐГЄГ¶ГЁГЁ
         if (line[0] == '[')
         {
-            // Проверяем что секция закрыта
+            // ГЏГ°Г®ГўГҐГ°ГїГҐГ¬ Г·ГІГ® Г±ГҐГЄГ¶ГЁГї Г§Г ГЄГ°Г»ГІГ 
             if (line.back() != ']')
             {
-                throw ini_parser_error("Некорректное объявление секции - отсутствует ']'", line_num);
+                throw ini_parser_error("ГЌГҐГЄГ®Г°Г°ГҐГЄГІГ­Г®ГҐ Г®ГЎГєГїГўГ«ГҐГ­ГЁГҐ Г±ГҐГЄГ¶ГЁГЁ - Г®ГІГ±ГіГІГ±ГІГўГіГҐГІ ']'", line_num);
             }
 
-            // Извлекаем имя секции
+            // Г€Г§ГўГ«ГҐГЄГ ГҐГ¬ ГЁГ¬Гї Г±ГҐГЄГ¶ГЁГЁ
             current_section = trim(line.substr(1, line.size() - 2));
             validate_section_name(current_section, line_num);
 
-            // Добавляем секцию в данные
+            // Г„Г®ГЎГ ГўГ«ГїГҐГ¬ Г±ГҐГЄГ¶ГЁГѕ Гў Г¤Г Г­Г­Г»ГҐ
             data[current_section];
             continue;
         }
 
-        // Проверяем что ключ-значение находится внутри секции
+        // ГЏГ°Г®ГўГҐГ°ГїГҐГ¬ Г·ГІГ® ГЄГ«ГѕГ·-Г§Г­Г Г·ГҐГ­ГЁГҐ Г­Г ГµГ®Г¤ГЁГІГ±Гї ГўГ­ГіГІГ°ГЁ Г±ГҐГЄГ¶ГЁГЁ
         if (current_section.empty())
         {
-            throw ini_parser_error("Ключ-значение вне секции", line_num);
+            throw ini_parser_error("ГЉГ«ГѕГ·-Г§Г­Г Г·ГҐГ­ГЁГҐ ГўГ­ГҐ Г±ГҐГЄГ¶ГЁГЁ", line_num);
         }
 
-        // Разделяем ключ и значение
+        // ГђГ Г§Г¤ГҐГ«ГїГҐГ¬ ГЄГ«ГѕГ· ГЁ Г§Г­Г Г·ГҐГ­ГЁГҐ
         auto kv_pair = split_key_value(line, line_num);
         validate_key_name(kv_pair.first, line_num);
 
-        // Сохраняем значение
+        // Г‘Г®ГµГ°Г Г­ГїГҐГ¬ Г§Г­Г Г·ГҐГ­ГЁГҐ
         data[current_section][kv_pair.first] = kv_pair.second;
     }
 }
 
-// Конструктор парсера
+// ГЉГ®Г­Г±ГІГ°ГіГЄГІГ®Г° ГЇГ Г°Г±ГҐГ°Г 
 ini_parser::ini_parser(const std::string& filename, bool create_default)
     : filename(filename), use_default_config(false)
 {
-    // Пытаемся открыть файл
+    // ГЏГ»ГІГ ГҐГ¬Г±Гї Г®ГІГЄГ°Г»ГІГј ГґГ Г©Г«
     std::ifstream file(filename);
 
     if (!file)
     {
-        // Если файл не найден и разрешено создание по умолчанию
+        // Г…Г±Г«ГЁ ГґГ Г©Г« Г­ГҐ Г­Г Г©Г¤ГҐГ­ ГЁ Г°Г Г§Г°ГҐГёГҐГ­Г® Г±Г®Г§Г¤Г Г­ГЁГҐ ГЇГ® ГіГ¬Г®Г«Г·Г Г­ГЁГѕ
         if (create_default)
         {
-            // Используем встроенную конфигурацию
+            // Г€Г±ГЇГ®Г«ГјГ§ГіГҐГ¬ ГўГ±ГІГ°Г®ГҐГ­Г­ГіГѕ ГЄГ®Г­ГґГЁГЈГіГ°Г Г¶ГЁГѕ
             std::istringstream default_config(R"(
 [Section1]
-; Пример секции с русскими комментариями
+; ГЏГ°ГЁГ¬ГҐГ° Г±ГҐГЄГ¶ГЁГЁ Г± Г°ГіГ±Г±ГЄГЁГ¬ГЁ ГЄГ®Г¬Г¬ГҐГ­ГІГ Г°ГЁГїГ¬ГЁ
 var1 = 5
-var2 = Привет, мир!
+var2 = ГЏГ°ГЁГўГҐГІ, Г¬ГЁГ°!
 
 [Section2]
 var1 = 42
-var2 = Тестовая строка
+var2 = Г’ГҐГ±ГІГ®ГўГ Гї Г±ГІГ°Г®ГЄГ 
 )");
             use_default_config = true;
             parse_file(default_config);
@@ -165,42 +165,42 @@ var2 = Тестовая строка
         }
         else
         {
-            throw ini_parser_error("Не удалось открыть файл: " + filename);
+            throw ini_parser_error("ГЌГҐ ГіГ¤Г Г«Г®Г±Гј Г®ГІГЄГ°Г»ГІГј ГґГ Г©Г«: " + filename);
         }
     }
     else
     {
-        // Парсим существующий файл
+        // ГЏГ Г°Г±ГЁГ¬ Г±ГіГ№ГҐГ±ГІГўГіГѕГ№ГЁГ© ГґГ Г©Г«
         parse_file(file);
     }
 }
 
-// Получение строкового значения по ключу
+// ГЏГ®Г«ГіГ·ГҐГ­ГЁГҐ Г±ГІГ°Г®ГЄГ®ГўГ®ГЈГ® Г§Г­Г Г·ГҐГ­ГЁГї ГЇГ® ГЄГ«ГѕГ·Гі
 std::string ini_parser::get_value_as_string(const std::string& key_path)
 {
-    // Разделяем путь на секцию и ключ
+    // ГђГ Г§Г¤ГҐГ«ГїГҐГ¬ ГЇГіГІГј Г­Г  Г±ГҐГЄГ¶ГЁГѕ ГЁ ГЄГ«ГѕГ·
     size_t dot_pos = key_path.find('.');
 
     if (dot_pos == std::string::npos)
     {
-        throw ini_parser_error("Некорректный формат ключа (отсутствует '.')");
+        throw ini_parser_error("ГЌГҐГЄГ®Г°Г°ГҐГЄГІГ­Г»Г© ГґГ®Г°Г¬Г ГІ ГЄГ«ГѕГ·Г  (Г®ГІГ±ГіГІГ±ГІГўГіГҐГІ '.')");
     }
 
     std::string section = key_path.substr(0, dot_pos);
     std::string key = key_path.substr(dot_pos + 1);
 
-    // Проверяем что секция и ключ не пустые
+    // ГЏГ°Г®ГўГҐГ°ГїГҐГ¬ Г·ГІГ® Г±ГҐГЄГ¶ГЁГї ГЁ ГЄГ«ГѕГ· Г­ГҐ ГЇГіГ±ГІГ»ГҐ
     if (section.empty() || key.empty())
     {
-        throw ini_parser_error("Пустое имя секции или ключа");
+        throw ini_parser_error("ГЏГіГ±ГІГ®ГҐ ГЁГ¬Гї Г±ГҐГЄГ¶ГЁГЁ ГЁГ«ГЁ ГЄГ«ГѕГ·Г ");
     }
 
-    // Ищем секцию
+    // Г€Г№ГҐГ¬ Г±ГҐГЄГ¶ГЁГѕ
     auto section_it = data.find(section);
 
     if (section_it == data.end())
     {
-        // Формируем список доступных секций для сообщения об ошибке
+        // Г”Г®Г°Г¬ГЁГ°ГіГҐГ¬ Г±ГЇГЁГ±Г®ГЄ Г¤Г®Г±ГІГіГЇГ­Г»Гµ Г±ГҐГЄГ¶ГЁГ© Г¤Г«Гї Г±Г®Г®ГЎГ№ГҐГ­ГЁГї Г®ГЎ Г®ГёГЁГЎГЄГҐ
         std::vector<std::string> available_sections;
 
         for (const auto& [sec, _] : data)
@@ -208,7 +208,7 @@ std::string ini_parser::get_value_as_string(const std::string& key_path)
             available_sections.push_back(sec);
         }
 
-        std::string hint = "Доступные секции: ";
+        std::string hint = "Г„Г®Г±ГІГіГЇГ­Г»ГҐ Г±ГҐГЄГ¶ГЁГЁ: ";
 
         for (size_t i = 0; i < available_sections.size(); ++i)
         {
@@ -219,15 +219,15 @@ std::string ini_parser::get_value_as_string(const std::string& key_path)
             hint += available_sections[i];
         }
 
-        throw ini_parser_error("Секция '" + section + "' не найдена. " + hint);
+        throw ini_parser_error("Г‘ГҐГЄГ¶ГЁГї '" + section + "' Г­ГҐ Г­Г Г©Г¤ГҐГ­Г . " + hint);
     }
 
-    // Ищем ключ в секции
+    // Г€Г№ГҐГ¬ ГЄГ«ГѕГ· Гў Г±ГҐГЄГ¶ГЁГЁ
     auto key_it = section_it->second.find(key);
 
     if (key_it == section_it->second.end())
     {
-        // Формируем список доступных ключей для сообщения об ошибке
+        // Г”Г®Г°Г¬ГЁГ°ГіГҐГ¬ Г±ГЇГЁГ±Г®ГЄ Г¤Г®Г±ГІГіГЇГ­Г»Гµ ГЄГ«ГѕГ·ГҐГ© Г¤Г«Гї Г±Г®Г®ГЎГ№ГҐГ­ГЁГї Г®ГЎ Г®ГёГЁГЎГЄГҐ
         std::vector<std::string> available_keys;
 
         for (const auto& [k, _] : section_it->second)
@@ -235,7 +235,7 @@ std::string ini_parser::get_value_as_string(const std::string& key_path)
             available_keys.push_back(k);
         }
 
-        std::string hint = "Доступные ключи в секции '" + section + "': ";
+        std::string hint = "Г„Г®Г±ГІГіГЇГ­Г»ГҐ ГЄГ«ГѕГ·ГЁ Гў Г±ГҐГЄГ¶ГЁГЁ '" + section + "': ";
 
         for (size_t i = 0; i < available_keys.size(); ++i)
         {
@@ -246,13 +246,13 @@ std::string ini_parser::get_value_as_string(const std::string& key_path)
             hint += available_keys[i];
         }
 
-        throw ini_parser_error("Ключ '" + key + "' не найден в секции '" + section + "'. " + hint);
+        throw ini_parser_error("ГЉГ«ГѕГ· '" + key + "' Г­ГҐ Г­Г Г©Г¤ГҐГ­ Гў Г±ГҐГЄГ¶ГЁГЁ '" + section + "'. " + hint);
     }
 
     return key_it->second;
 }
 
-// Создание конфигурационного файла по умолчанию
+// Г‘Г®Г§Г¤Г Г­ГЁГҐ ГЄГ®Г­ГґГЁГЈГіГ°Г Г¶ГЁГ®Г­Г­Г®ГЈГ® ГґГ Г©Г«Г  ГЇГ® ГіГ¬Г®Г«Г·Г Г­ГЁГѕ
 void ini_parser::create_default_config(const std::string& filename)
 {
     std::ofstream out(filename);
@@ -261,18 +261,18 @@ void ini_parser::create_default_config(const std::string& filename)
     {
         out << R"(
 [Section1]
-; Пример секции с русскими комментариями
+; ГЏГ°ГЁГ¬ГҐГ° Г±ГҐГЄГ¶ГЁГЁ Г± Г°ГіГ±Г±ГЄГЁГ¬ГЁ ГЄГ®Г¬Г¬ГҐГ­ГІГ Г°ГЁГїГ¬ГЁ
 var1 = 5
-var2 = Привет, мир!
+var2 = ГЏГ°ГЁГўГҐГІ, Г¬ГЁГ°!
 
 [Section2]
 var1 = 42
-var2 = Тестовая строка
+var2 = Г’ГҐГ±ГІГ®ГўГ Гї Г±ГІГ°Г®ГЄГ 
 )";
-        std::cout << "Создан новый конфиг файл: " << filename << std::endl;
+        std::cout << "Г‘Г®Г§Г¤Г Г­ Г­Г®ГўГ»Г© ГЄГ®Г­ГґГЁГЈ ГґГ Г©Г«: " << filename << std::endl;
     }
     else
     {
-        throw ini_parser_error("Не удалось создать файл конфигурации");
+        throw ini_parser_error("ГЌГҐ ГіГ¤Г Г«Г®Г±Гј Г±Г®Г§Г¤Г ГІГј ГґГ Г©Г« ГЄГ®Г­ГґГЁГЈГіГ°Г Г¶ГЁГЁ");
     }
 }
