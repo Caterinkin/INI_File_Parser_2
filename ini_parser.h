@@ -10,50 +10,50 @@
 #include <cctype>
 #include <fstream>
 
-// Класс для обработки ошибок парсера
+// РљР»Р°СЃСЃ РґР»СЏ РѕР±СЂР°Р±РѕС‚РєРё РѕС€РёР±РѕРє РїР°СЂСЃРµСЂР°
 class ini_parser_error : public std::runtime_error
 {
 public:
-    // Конструктор с сообщением об ошибке и необязательным номером строки
+    // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ СЃРѕРѕР±С‰РµРЅРёРµРј РѕР± РѕС€РёР±РєРµ Рё РЅРµРѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рј РЅРѕРјРµСЂРѕРј СЃС‚СЂРѕРєРё
     explicit ini_parser_error(const std::string& msg, int line = -1)
-        : std::runtime_error(line == -1 ? msg : "Ошибка в строке " + std::to_string(line) + ": " + msg)
+        : std::runtime_error(line == -1 ? msg : "РћС€РёР±РєР° РІ СЃС‚СЂРѕРєРµ " + std::to_string(line) + ": " + msg)
     {
     }
 };
 
-// Основной класс парсера INI-файлов
+// РћСЃРЅРѕРІРЅРѕР№ РєР»Р°СЃСЃ РїР°СЂСЃРµСЂР° INI-С„Р°Р№Р»РѕРІ
 class ini_parser
 {
 private:
-    // Структура для хранения данных: секция -> (ключ -> значение)
+    // РЎС‚СЂСѓРєС‚СѓСЂР° РґР»СЏ С…СЂР°РЅРµРЅРёСЏ РґР°РЅРЅС‹С…: СЃРµРєС†РёСЏ -> (РєР»СЋС‡ -> Р·РЅР°С‡РµРЅРёРµ)
     std::map<std::string, std::map<std::string, std::string>> data;
 
-    // Имя файла конфигурации
+    // РРјСЏ С„Р°Р№Р»Р° РєРѕРЅС„РёРіСѓСЂР°С†РёРё
     std::string filename;
 
-    // Флаг использования встроенной конфигурации
+    // Р¤Р»Р°Рі РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ РІСЃС‚СЂРѕРµРЅРЅРѕР№ РєРѕРЅС„РёРіСѓСЂР°С†РёРё
     bool use_default_config;
 
-    // Вспомогательные методы
-    std::string trim(const std::string& str); // Удаление пробелов
-    std::pair<std::string, std::string> split_key_value(const std::string& line, int line_num); // Разделение ключа и значения
-    void validate_section_name(const std::string& name, int line_num); // Проверка имени секции
-    void validate_key_name(const std::string& name, int line_num); // Проверка имени ключа
-    void parse_file(std::istream& stream); // Основной метод парсинга
-    std::string get_value_as_string(const std::string& key_path); // Получение строкового значения
+    // Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ РјРµС‚РѕРґС‹
+    std::string trim(const std::string& str); // РЈРґР°Р»РµРЅРёРµ РїСЂРѕР±РµР»РѕРІ
+    std::pair<std::string, std::string> split_key_value(const std::string& line, int line_num); // Р Р°Р·РґРµР»РµРЅРёРµ РєР»СЋС‡Р° Рё Р·РЅР°С‡РµРЅРёСЏ
+    void validate_section_name(const std::string& name, int line_num); // РџСЂРѕРІРµСЂРєР° РёРјРµРЅРё СЃРµРєС†РёРё
+    void validate_key_name(const std::string& name, int line_num); // РџСЂРѕРІРµСЂРєР° РёРјРµРЅРё РєР»СЋС‡Р°
+    void parse_file(std::istream& stream); // РћСЃРЅРѕРІРЅРѕР№ РјРµС‚РѕРґ РїР°СЂСЃРёРЅРіР°
+    std::string get_value_as_string(const std::string& key_path); // РџРѕР»СѓС‡РµРЅРёРµ СЃС‚СЂРѕРєРѕРІРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ
 
-    // Шаблонная функция преобразования строки в нужный тип
+    // РЁР°Р±Р»РѕРЅРЅР°СЏ С„СѓРЅРєС†РёСЏ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ СЃС‚СЂРѕРєРё РІ РЅСѓР¶РЅС‹Р№ С‚РёРї
     template<typename T>
     T convert_value(const std::string& str) const
     {
-        static_assert(sizeof(T) == -1, "Не реализовано преобразование для этого типа");
+        static_assert(sizeof(T) == -1, "РќРµ СЂРµР°Р»РёР·РѕРІР°РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РґР»СЏ СЌС‚РѕРіРѕ С‚РёРїР°");
     }
 
 public:
-    // Конструктор с возможностью создания конфига по умолчанию
+    // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊСЋ СЃРѕР·РґР°РЅРёСЏ РєРѕРЅС„РёРіР° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
     explicit ini_parser(const std::string& filename, bool create_default = false);
 
-    // Шаблонный метод для получения значения
+    // РЁР°Р±Р»РѕРЅРЅС‹Р№ РјРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ Р·РЅР°С‡РµРЅРёСЏ
     template<typename T>
     T get_value(const std::string& key_path)
     {
@@ -61,11 +61,11 @@ public:
         return convert_value<T>(str_value);
     }
 
-    // Статический метод для создания конфига по умолчанию
+    // РЎС‚Р°С‚РёС‡РµСЃРєРёР№ РјРµС‚РѕРґ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РєРѕРЅС„РёРіР° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
     static void create_default_config(const std::string& filename);
 };
 
-// Специализация для целых чисел
+// РЎРїРµС†РёР°Р»РёР·Р°С†РёСЏ РґР»СЏ С†РµР»С‹С… С‡РёСЃРµР»
 template<>
 inline int ini_parser::convert_value<int>(const std::string& str) const
 {
@@ -75,28 +75,28 @@ inline int ini_parser::convert_value<int>(const std::string& str) const
     }
     catch (...)
     {
-        throw ini_parser_error("Не удалось преобразовать '" + str + "' в int");
+        throw ini_parser_error("РќРµ СѓРґР°Р»РѕСЃСЊ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ '" + str + "' РІ int");
     }
 }
 
-// Специализация для чисел double
+// РЎРїРµС†РёР°Р»РёР·Р°С†РёСЏ РґР»СЏ С‡РёСЃРµР» double
 template<>
 inline double ini_parser::convert_value<double>(const std::string& str) const
 {
     try
     {
-        // Заменяем запятые на точки для корректного парсинга
+        // Р—Р°РјРµРЅСЏРµРј Р·Р°РїСЏС‚С‹Рµ РЅР° С‚РѕС‡РєРё РґР»СЏ РєРѕСЂСЂРµРєС‚РЅРѕРіРѕ РїР°СЂСЃРёРЅРіР°
         std::string normalized = str;
         std::replace(normalized.begin(), normalized.end(), ',', '.');
         return std::stod(normalized);
     }
     catch (...)
     {
-        throw ini_parser_error("Не удалось преобразовать '" + str + "' в double");
+        throw ini_parser_error("РќРµ СѓРґР°Р»РѕСЃСЊ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ '" + str + "' РІ double");
     }
 }
 
-// Специализация для чисел float
+// РЎРїРµС†РёР°Р»РёР·Р°С†РёСЏ РґР»СЏ С‡РёСЃРµР» float
 template<>
 inline float ini_parser::convert_value<float>(const std::string& str) const
 {
@@ -108,41 +108,41 @@ inline float ini_parser::convert_value<float>(const std::string& str) const
     }
     catch (...)
     {
-        throw ini_parser_error("Не удалось преобразовать '" + str + "' в float");
+        throw ini_parser_error("РќРµ СѓРґР°Р»РѕСЃСЊ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ '" + str + "' РІ float");
     }
 }
 
-// Специализация для строк
+// РЎРїРµС†РёР°Р»РёР·Р°С†РёСЏ РґР»СЏ СЃС‚СЂРѕРє
 template<>
 inline std::string ini_parser::convert_value<std::string>(const std::string& str) const
 {
     return str;
 }
 
-// Специализация для булевых значений
+// РЎРїРµС†РёР°Р»РёР·Р°С†РёСЏ РґР»СЏ Р±СѓР»РµРІС‹С… Р·РЅР°С‡РµРЅРёР№
 template<>
 inline bool ini_parser::convert_value<bool>(const std::string& str) const
 {
     std::string lower;
     lower.reserve(str.size());
 
-    // Приводим к нижнему регистру для сравнения
+    // РџСЂРёРІРѕРґРёРј Рє РЅРёР¶РЅРµРјСѓ СЂРµРіРёСЃС‚СЂСѓ РґР»СЏ СЃСЂР°РІРЅРµРЅРёСЏ
     for (char c : str)
     {
         lower.push_back(std::tolower(c));
     }
 
-    // Поддерживаем разные форматы true
+    // РџРѕРґРґРµСЂР¶РёРІР°РµРј СЂР°Р·РЅС‹Рµ С„РѕСЂРјР°С‚С‹ true
     if (lower == "true" || lower == "1" || lower == "yes" || lower == "on")
     {
         return true;
     }
 
-    // Поддерживаем разные форматы false
+    // РџРѕРґРґРµСЂР¶РёРІР°РµРј СЂР°Р·РЅС‹Рµ С„РѕСЂРјР°С‚С‹ false
     if (lower == "false" || lower == "0" || lower == "no" || lower == "off")
     {
         return false;
     }
 
-    throw ini_parser_error("Не удалось преобразовать '" + str + "' в bool");
+    throw ini_parser_error("РќРµ СѓРґР°Р»РѕСЃСЊ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ '" + str + "' РІ bool");
 }
