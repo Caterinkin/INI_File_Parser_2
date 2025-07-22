@@ -6,51 +6,51 @@ int main()
 {
     try
     {
-        // Установка локали для поддержки русского языка
+        // РЈСЃС‚Р°РЅРѕРІРєР° Р»РѕРєР°Р»Рё РґР»СЏ РїРѕРґРґРµСЂР¶РєРё СЂСѓСЃСЃРєРѕРіРѕ СЏР·С‹РєР°
         setlocale(LC_ALL, "Russian");
         std::locale::global(std::locale(""));
 
-        // Имя файла конфигурации
+        // РРјСЏ С„Р°Р№Р»Р° РєРѕРЅС„РёРіСѓСЂР°С†РёРё
         const std::string config_file = "config.ini";
 
-        // Создаем парсер с автоматическим созданием конфига при необходимости
+        // РЎРѕР·РґР°РµРј РїР°СЂСЃРµСЂ СЃ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРёРј СЃРѕР·РґР°РЅРёРµРј РєРѕРЅС„РёРіР° РїСЂРё РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё
         ini_parser parser(config_file, true);
 
-        // Примеры чтения значений
+        // РџСЂРёРјРµСЂС‹ С‡С‚РµРЅРёСЏ Р·РЅР°С‡РµРЅРёР№
         try
         {
-            // Чтение значений из Section1
+            // Р§С‚РµРЅРёРµ Р·РЅР°С‡РµРЅРёР№ РёР· Section1
             int var1 = parser.get_value<int>("Section1.var1");
             std::string var2 = parser.get_value<std::string>("Section1.var2");
 
-            // Чтение значений из Section2
+            // Р§С‚РµРЅРёРµ Р·РЅР°С‡РµРЅРёР№ РёР· Section2
             int var1_sec2 = parser.get_value<int>("Section2.var1");
             std::string var2_sec2 = parser.get_value<std::string>("Section2.var2");
 
-            // Вывод значений
+            // Р’С‹РІРѕРґ Р·РЅР°С‡РµРЅРёР№
             std::cout << "Section1.var1 = " << var1 << std::endl;
             std::cout << "Section1.var2 = " << var2 << std::endl;
             std::cout << "Section2.var1 = " << var1_sec2 << std::endl;
             std::cout << "Section2.var2 = " << var2_sec2 << std::endl;
 
-            // Пример чтения bool значения (добавьте в конфиг параметр типа bool)
+            // РџСЂРёРјРµСЂ С‡С‚РµРЅРёСЏ bool Р·РЅР°С‡РµРЅРёСЏ (РґРѕР±Р°РІСЊС‚Рµ РІ РєРѕРЅС„РёРі РїР°СЂР°РјРµС‚СЂ С‚РёРїР° bool)
             // bool debug = parser.get_value<bool>("Section1.debug_mode");
             // std::cout << "Debug mode: " << std::boolalpha << debug << std::endl;
         }
         catch (const ini_parser_error& e)
         {
-            std::cerr << "Ошибка чтения значений: " << e.what() << std::endl;
+            std::cerr << "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ Р·РЅР°С‡РµРЅРёР№: " << e.what() << std::endl;
             return 1;
         }
     }
     catch (const ini_parser_error& e)
     {
-        std::cerr << "Ошибка INI-парсера: " << e.what() << std::endl;
+        std::cerr << "РћС€РёР±РєР° INI-РїР°СЂСЃРµСЂР°: " << e.what() << std::endl;
         return 1;
     }
     catch (const std::exception& e)
     {
-        std::cerr << "Неожиданная ошибка: " << e.what() << std::endl;
+        std::cerr << "РќРµРѕР¶РёРґР°РЅРЅР°СЏ РѕС€РёР±РєР°: " << e.what() << std::endl;
         return 2;
     }
 
